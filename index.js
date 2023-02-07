@@ -3,20 +3,30 @@ const { ApolloServer } = require('apollo-server-express');
 require('./models/db')
 const Issue = require('./models/issues')
 
+
 let greetMessage = "Hello From GraphQL";
 
 const typeDefs = `
+    type issue {
+        Id: Int,
+        Status: String,
+        Owner: String,
+        Effort: Int,
+        Created: String,
+        Due: String,
+        Title: String
+    }
     type Query {
         greet: String!
-        
+        issueList: [issue]!
     }
-    type Mutation {
-        setGreetMessage(message: String!): String        
+    type Mutation {  
+      setGreetMessage(message: String!): String
     }
 `;
 const resolvers = {
     Query: {
-        greet: () => greetMessage
+        issueList
     },
     Mutation: {
         setGreetMessage
@@ -27,14 +37,16 @@ function setGreetMessage(_, { message }) {
     return greetMessage = message;
 }
 
+async function issueList() {
+    return (await Issue.find());
+}
+
 const server = new ApolloServer({
     typeDefs,
     resolvers
 });
 
-async function issueList() {
-    return (await Issue.find());
-}
+
 
 const app = express()
 app.use(express.static('./public'))

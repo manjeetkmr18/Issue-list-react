@@ -13,11 +13,11 @@ function IssueRow({
     style: style
   }, issue.Status), /*#__PURE__*/React.createElement("td", {
     style: style
-  }, issue.Created.toUTCString()), /*#__PURE__*/React.createElement("td", {
+  }, new Date(parseInt(issue.Created)).toLocaleDateString()), /*#__PURE__*/React.createElement("td", {
     style: style
   }, issue.Effort), /*#__PURE__*/React.createElement("td", {
     style: style
-  }, issue.Due.toUTCString()), /*#__PURE__*/React.createElement("td", {
+  }, new Date(parseInt(issue.Due)).toLocaleDateString()), /*#__PURE__*/React.createElement("td", {
     style: style
   }, issue.Title));
 }
@@ -130,16 +130,12 @@ const IssueList = () => {
       })
     }).then(async response => {
       let tempIssues = await response.json();
-      let tempList = tempIssues.data.issueList;
       console.log(tempIssues);
+      let tempList = tempIssues.data.issueList;
       setAllIssues(tempList);
     });
   }, []);
 
-  // const issueList = [
-  //     { Id: 1, Owner: "Person-A", Status: "Assigned", Created: new Date("2023-01-20"), Effort: 3, Due: new Date("2023-01-24"), Title: "This is First Issue" },
-  //     { Id: 2, Owner: "Person-B", Status: "Resolved", Created: new Date("2023-01-18"), Effort: 2, Due: new Date("2023-01-20"), Title: "This is Second Issue" }
-  // ];
   // React.useEffect(() => {
   //     setTimeout(() => {
   //         setAllIssues(issueList);
@@ -147,7 +143,7 @@ const IssueList = () => {
   //     }, 2000)
   // }, []);
 
-  const AddSingleIssue = newIssue => {
+  const AddSingleIssue = async newIssue => {
     const d = new Date();
     newIssue.Id = allIssues.length + 1;
     newIssue.Created = d;
