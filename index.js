@@ -1,5 +1,7 @@
 const express = require("express")
 const { ApolloServer } = require('apollo-server-express');
+require('./models/db')
+const Issue = require('./models/issues')
 
 let greetMessage = "Hello From GraphQL";
 
@@ -30,10 +32,13 @@ const server = new ApolloServer({
     resolvers
 });
 
+async function issueList() {
+    return (await Issue.find());
+}
 
 const app = express()
 app.use(express.static('./public'))
-e
+
 
 server.start()
     .then(function () {

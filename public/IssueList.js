@@ -105,30 +105,48 @@ function IssueAdd({
   }, errorMessage));
 }
 const IssueList = () => {
-  const issueList = [{
-    Id: 1,
-    Owner: "Person-A",
-    Status: "Assigned",
-    Created: new Date("2023-01-20"),
-    Effort: 3,
-    Due: new Date("2023-01-24"),
-    Title: "This is First Issue"
-  }, {
-    Id: 2,
-    Owner: "Person-B",
-    Status: "Resolved",
-    Created: new Date("2023-01-18"),
-    Effort: 2,
-    Due: new Date("2023-01-20"),
-    Title: "This is Second Issue"
-  }];
+  let query = `
+        query  {
+            issueList {
+                Id
+                Status
+                Owner
+                Effort
+                Created
+                Due
+                Title
+            }
+      }
+    `;
   const [allIssues, setAllIssues] = React.useState([]);
-  React.useEffect(() => {
-    setTimeout(() => {
-      setAllIssues(issueList);
-      console.log("HELLO-1");
-    }, 2000);
+  React.useEffect(function () {
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
+    }).then(async response => {
+      let tempIssues = await response.json();
+      let tempList = tempIssues.data.issueList;
+      console.log(tempIssues);
+      setAllIssues(tempList);
+    });
   }, []);
+
+  // const issueList = [
+  //     { Id: 1, Owner: "Person-A", Status: "Assigned", Created: new Date("2023-01-20"), Effort: 3, Due: new Date("2023-01-24"), Title: "This is First Issue" },
+  //     { Id: 2, Owner: "Person-B", Status: "Resolved", Created: new Date("2023-01-18"), Effort: 2, Due: new Date("2023-01-20"), Title: "This is Second Issue" }
+  // ];
+  // React.useEffect(() => {
+  //     setTimeout(() => {
+  //         setAllIssues(issueList);
+  //         console.log("HELLO-1")
+  //     }, 2000)
+  // }, []);
+
   const AddSingleIssue = newIssue => {
     const d = new Date();
     newIssue.Id = allIssues.length + 1;
