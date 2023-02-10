@@ -4,8 +4,6 @@ require('./models/db')
 const Issue = require('./models/issues')
 
 
-let greetMessage = "Hello From GraphQL";
-
 const typeDefs = `
     type issue {
         Id: Int,
@@ -33,18 +31,20 @@ const resolvers = {
     },
 };
 
-function setGreetMessage(_, { message }) {
-    return greetMessage = message;
-}
 
-
-function addSingleIssue(_, { Status, Owner, Effort, Title }) {
+async function addSingleIssue(_, { Status, Owner, Effort, Title }) {
+    console.log(Status);
     let singleIssue = {
         Owner: Owner,
         Status: Status,
         Effort: Effort,
-        Title: Title
+        Title: Title,
+        Created: new Date(),
+        Due: new Date(),
     }
+    let cnt = await Issue.find().count();
+    singleIssue.Id = cnt + 1;
+    return await Issue.create(singleIssue);
 }
 
 async function issueList() {

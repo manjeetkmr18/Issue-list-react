@@ -119,7 +119,7 @@ const IssueList = () => {
       }
     `;
   const [allIssues, setAllIssues] = React.useState([]);
-  React.useEffect(function () {
+  function fetchData() {
     fetch('/graphql', {
       method: 'POST',
       headers: {
@@ -130,10 +130,12 @@ const IssueList = () => {
       })
     }).then(async response => {
       let tempIssues = await response.json();
-      console.log(tempIssues);
       let tempList = tempIssues.data.issueList;
       setAllIssues(tempList);
     });
+  }
+  React.useEffect(function () {
+    fetchData();
   }, []);
 
   // React.useEffect(() => {
@@ -145,8 +147,8 @@ const IssueList = () => {
 
   const AddSingleIssue = async newIssue => {
     let query = `
-        mutation AddSingleIssue($addSingleIssueStatus2: String!, $effort: Int!, $addSingleIssueTitle2: String!, $addSingleIssueOwner2: String!) {
-        addSingleIssue(Status: $addSingleIssueStatus2, Effort: $effort, Title: $addSingleIssueTitle2, Owner: $addSingleIssueOwner2) {
+       mutation AddSingleIssue($Status: String!, $Title: String!, $Effort: Int!, $Owner: String!) {
+        addSingleIssue(Status: $Status, Title: $Title, Effort: $Effort, Owner: $Owner) {
             Id
             Status
             Owner
@@ -154,28 +156,28 @@ const IssueList = () => {
             Created
             Due
             Title
-        }   
-        }`;
+        }
+    }`;
+    console.log(newIssue);
     fetch('/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        query
+        query,
+        variables: {
+          Status: newIssue.Status,
+          Owner: newIssue.Owner,
+          Effort: newIssue.Effort,
+          Title: newIssue.Title
+        }
       })
-    }).then(async response => {});
-
-    // const d = new Date();
-    // newIssue.Id = allIssues.length + 1;
-    // newIssue.Created = d;
-    // newIssue.Due = new Date(d.getDate() + newIssue.Effort);// (new Date()).getDate() + newIssue.Effort; //date.getDate() + 1
-    // console.log(newIssue);
-    // let issues = allIssues.slice();
-    // issues.push(newIssue);
-    // setAllIssues(issues);
+    }).then(async response => {
+      console.log(response);
+      fetchData();
+    });
   };
-
   return /*#__PURE__*/React.createElement(React.StrictMode, null, /*#__PURE__*/React.createElement(IssueFilter, null), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueTable, {
     allIssues: allIssues
   }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueAdd, {
