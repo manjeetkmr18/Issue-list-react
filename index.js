@@ -21,7 +21,7 @@ const typeDefs = `
         issueList: [issue]!
     }
     type Mutation {  
-      setGreetMessage(message: String!): String
+      addSingleIssue(Status: String!, Effort: Int!, Title: String!, Owner: String!): issue
     }
 `;
 const resolvers = {
@@ -29,12 +29,22 @@ const resolvers = {
         issueList
     },
     Mutation: {
-        setGreetMessage
+        addSingleIssue
     },
 };
 
 function setGreetMessage(_, { message }) {
     return greetMessage = message;
+}
+
+
+function addSingleIssue(_, { Status, Owner, Effort, Title }) {
+    let singleIssue = {
+        Owner: Owner,
+        Status: Status,
+        Effort: Effort,
+        Title: Title
+    }
 }
 
 async function issueList() {

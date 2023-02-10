@@ -144,15 +144,38 @@ const IssueList = () => {
   // }, []);
 
   const AddSingleIssue = async newIssue => {
-    const d = new Date();
-    newIssue.Id = allIssues.length + 1;
-    newIssue.Created = d;
-    newIssue.Due = new Date(d.getDate() + newIssue.Effort); // (new Date()).getDate() + newIssue.Effort; //date.getDate() + 1
-    console.log(newIssue);
-    let issues = allIssues.slice();
-    issues.push(newIssue);
-    setAllIssues(issues);
+    let query = `
+        mutation AddSingleIssue($addSingleIssueStatus2: String!, $effort: Int!, $addSingleIssueTitle2: String!, $addSingleIssueOwner2: String!) {
+        addSingleIssue(Status: $addSingleIssueStatus2, Effort: $effort, Title: $addSingleIssueTitle2, Owner: $addSingleIssueOwner2) {
+            Id
+            Status
+            Owner
+            Effort
+            Created
+            Due
+            Title
+        }   
+        }`;
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
+    }).then(async response => {});
+
+    // const d = new Date();
+    // newIssue.Id = allIssues.length + 1;
+    // newIssue.Created = d;
+    // newIssue.Due = new Date(d.getDate() + newIssue.Effort);// (new Date()).getDate() + newIssue.Effort; //date.getDate() + 1
+    // console.log(newIssue);
+    // let issues = allIssues.slice();
+    // issues.push(newIssue);
+    // setAllIssues(issues);
   };
+
   return /*#__PURE__*/React.createElement(React.StrictMode, null, /*#__PURE__*/React.createElement(IssueFilter, null), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueTable, {
     allIssues: allIssues
   }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueAdd, {
